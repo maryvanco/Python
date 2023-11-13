@@ -1,0 +1,84 @@
+import pandas as pd
+
+df = pd.read_csv(r"/Users/mary/Documents/python stuff/data/netflix_titles.csv")
+df.info()
+
+df.head()
+
+
+# What is the most popular release year for movies on Netflix?
+
+df['count'] = 1
+
+movie_df = df[df['type']=='Movie']
+
+count_movies = movie_df.groupby(['release_year']).sum().reset_index()
+
+count_movies.sort_values('count', ascending = False)
+
+df['type'].unique()
+
+
+
+
+
+# What year did Netflix add the most content to its platform?
+
+df.head()
+
+df['new_date'] = pd.to_datetime(df['date_added'])
+
+df['year_added'] = df['new_date'].dt.year
+
+df.head(2)
+
+count_year = df.groupby(['year_added']).sum().reset_index()[['year_added', 'count']]
+count_year.sort_values('count', ascending = False)
+
+
+
+
+# What is the most popular month to add new content?
+
+df.head(2)
+
+df['month_added'] = df['new_date'].dt.month
+
+count_month_added = df.groupby('month_added').sum().reset_index()[['month_added', 'count']]
+count_month_added.sort_values('count', ascending = False)
+
+
+
+
+# What is the movie with the longest title in the dataset?
+
+movie_df.head()
+
+movie_df['title_length'] = [len(title) for title in movie_df['title']]
+
+top_title_length = movie_df.sort_values(['title_length'], ascending = False)
+
+top_title_length.iloc[0]['title']
+
+
+
+
+# Which actor/actress appeared in the most movies & tv shows?
+
+pd.options.display.max_colwidth = 150
+
+title_and_cast_df = df[['title', 'cast']]
+title_and_cast_df = title_and_cast_df.dropna()
+title_and_cast_df
+
+cast_names_counter = {}
+
+for index, row in title_and_cast_df.iterrows():
+    movie_cast = row['cast']
+    movie_cast_split = movie_cast.split(',')
+    movie_cast_stripped = [name.strip().lower() for name in movie_cast_split]
+    for name in movie_cast_stripped:
+        cast_names_counter[name] = cast_names_counter.get(name, 0) + 1
+        
+dict(sorted(cast_names_counter.items(), key=lambda item: item[1], reverse=True))
+
