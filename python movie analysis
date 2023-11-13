@@ -1,3 +1,5 @@
+# This project was created with data from: https://www.kaggle.com/datasets/shivamb/netflix-shows
+
 import pandas as pd
 
 df = pd.read_csv(r"/Users/mary/Documents/python stuff/data/netflix_titles.csv")
