@@ -1,0 +1,107 @@
+# Project 1
+
+import pandas as pd
+
+df = pd.read_csv(r"/Users/mary/Documents/python stuff/data/data thinkers tutorials/Ecommerce Purchases")
+
+df.head()
+
+df.dtypes
+
+df.isnull().sum()
+
+
+
+how many rows and columns are in this dataset?
+
+df.shape
+
+len(df.columns)
+
+len(df)
+
+
+
+Highest and Lowest Purchase Prices.
+
+df['Purchase Price'].max()
+
+df['Purchase Price'].min()
+
+
+
+Average Purchase Price
+
+df['Purchase Price'].mean()
+
+
+
+How many people have French 'fr' as their Language?
+
+len(df[df['Language']=='fr'])
+
+df[df['Language']=='fr'].count()
+
+
+
+Job Title Contains Engineer
+
+df[df['Job'].str.contains('engineer', case= False)]
+
+
+
+Find The Email of the person with the following IP Address: 132.207.160.22
+
+df[df['IP Address']=='132.207.160.22']['Email']
+
+
+
+How many People have Mastercard as their Credit Card Provider and made a purchase above 50?
+
+len(df[(df['CC Provider']=='Mastercard') & (df['Purchase Price']>50)])
+
+
+
+Find the email of the person with the following Credit Card Number: 4664825258997302
+
+df[df['Credit Card']==4664825258997302]['Email']
+
+
+
+How many people purchase during the AM and how many people purchase during PM?
+
+df['AM or PM'].value_counts()
+
+
+
+How many people have a credit card that expires in 2020?
+
+df.head()
+
+def fun():
+    count = 0
+    for date in df['CC Exp Date']:
+        if date.split('/')[1]=='20':
+            count= count+1
+    print(count)
+
+fun()
+
+len(df[df['CC Exp Date'].apply(lambda x:x[3:]=='20')])
+
+
+
+
+
+What are the top 5 most popular email providers (e.g. gmail.com, yahoo.com, etc...) 
+
+list1=[]
+for email in df['Email']:
+    list1.append(email.split('@')[1])
+
+df['temp']=list1
+
+df['temp'].value_counts().head()
+
+df['Email'].apply(lambda x:x.split('@')[1]).value_counts().head()
+
