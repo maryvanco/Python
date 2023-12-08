@@ -1,0 +1,182 @@
+
+
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df3 = pd.read_csv(r"/Users/mary/Documents/python stuff/data/data thinkers tutorials/adult.csv")
+
+df3.head()
+
+
+
+How to fetch random samples from the Dataset
+
+df3_sample = df3.sample(frac=0.50)
+df3_sample
+
+
+
+check null values in the dataset
+
+df3.isnull().sum()
+
+sns.heatmap(df3.isnull())
+
+
+
+replace ? with nan
+
+df3.isin(['?']).sum()
+
+import numpy as np
+
+df3['workclass'] = df3['workclass'].replace('?', np.nan)
+df3['occupation'] = df3['occupation'].replace('?', np.nan)
+df3['native-country'] = df3['native-country'].replace('?', np.nan)
+
+df3.head()
+
+df3.isin(['?']).sum()
+
+df3.isnull().sum()
+
+sns.heatmap(df3.isnull())
+
+
+
+drop all the missing values
+
+per_missing = df3.isnull().sum()*100/len(df3)
+per_missing
+
+df3.dropna(how='any', inplace=True)
+
+df3.shape
+
+
+
+check for duplicated data and drop them
+
+dup=df3.duplicated().any()
+print('Are there any duplicated values in the dataset:', dup)
+
+df3= df3.drop_duplicates()
+
+df3.shape
+
+dup1= df3.duplicated().any()
+print('Are there any duplicated values in the dataset:', dup1)
+
+
+
+get overall statistics about the data
+
+df3.describe()
+
+df3.describe(include='all')
+
+
+
+drop unnecessary columns
+
+df3.columns
+
+df3= df3.drop(['educational-num','capital-gain','capital-loss'], axis=1)
+
+df3.head()
+
+
+
+univariate analysis
+
+what is the distribution of the age column
+
+df3['age'].describe()
+
+df3['age'].hist()
+
+
+
+find total number of people having age between 17 and 48 (inclusive), use between method
+
+sum(df3['age'].between(17,48))
+
+sum((df3['age']>=17) & (df3['age']<=48))
+
+
+
+what is the ditribution of the workclass column
+
+df3.columns
+
+df3['workclass'].describe()
+
+plt.figure(figsize=(9,9))
+df3['workclass'].hist()
+
+
+
+how many people have bachelors and masters degrees
+
+df3.columns
+
+df3['education'].value_counts()
+
+filter1= df3['education']=='Bachelors' 
+filter2= df3['education']=='Masters'
+
+len(df3[filter1 | filter2])
+
+sum(df3['education'].isin(['Bachelors','Masters']))
+
+
+
+bivariate analysis
+
+df3.columns
+
+sns.boxplot(x='income',y='age', data=df3)
+
+
+
+replace income values with 0 and 1
+
+sns.countplot(x='income', data=df3)
+
+def salary_data(sal):
+    if sal=='<=50K':
+        return 0
+    else:
+        return 1
+
+df3['encoded_income'] = df3['income'].apply(salary_data)
+
+df3.head()
+
+df3.replace(to_replace=['<=50K','>50K'], value=[0,1], inplace=True)
+
+
+
+which workclass has the highest salary
+
+df3.groupby('workclass')['income'].mean().sort_values(ascending=False)
+
+
+
+who has greater chance of having >50K salary, male or female
+
+df3.columns
+
+df3.groupby('gender')['income'].mean().sort_values(ascending=False)
+
+
+
+convert workclass datatype to category datatype
+
+df3.info()
+
+df3['workclass']= df3['workclass'].astype('category')
+
+df3.info()
