@@ -1,0 +1,154 @@
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df4 = pd.read_csv(r"/Users/mary/Documents/python stuff/data/data thinkers tutorials/train.csv")
+
+df4.info()
+
+df4.shape
+
+df4.describe()
+
+
+
+data filtering
+
+df4.columns
+
+df4[['Name', 'Age']]
+
+sum(df4['Sex']=='male')
+
+df4[df4['Sex']=='male']
+
+
+
+sum(df4['Survived']==1)
+
+df4[df4['Survived']==1]
+
+
+
+
+
+check for null values
+
+df4.isnull().sum()
+
+sns.heatmap(df4.isnull())
+
+percent_null = df4.isnull().sum()*100/len(df4)
+percent_null
+
+
+
+drop cabin column
+
+df4.drop('Cabin', axis=1, inplace = True)
+
+df4.isnull().sum()
+
+
+
+handle missing values
+
+df4['Embarked'].mode()
+
+df4['Embarked'].fillna('S', inplace = True)
+
+df4.isnull().sum()
+
+df4['Age'].fillna(df4['Age'].mean(), inplace=True)
+
+df4.isnull().sum()
+
+
+
+
+
+Categorical Data Encoding
+
+df4.head()
+
+df4['Sex'].unique()
+
+df4['Gender']= df4['Sex'].map({'male':1, 'female':0})
+
+df4.head()
+
+x=df4['Sex'].map({'male':1, 'female':0})
+
+df4.insert(5,'Gender_New', x)
+
+df4.head()
+
+
+
+df4['Embarked'].unique()
+
+pd.get_dummies(df4, columns=['Embarked'])
+
+data1=pd.get_dummies(df4, columns=['Embarked'], drop_first=True)
+
+
+
+How Many People Survived And How Many Died?
+
+df4.columns
+
+df4['Survived'].value_counts()
+
+sns.countplot(x=df4['Survived'])
+
+
+
+
+
+How Many Passengers Were In First Class, Second Class, and Third Class?
+
+df4['Pclass'].value_counts()
+
+sns.countplot(x=df4['Pclass'])
+
+
+
+Number of Male And Female Passengers
+
+df4['Sex'].value_counts()
+
+sns.countplot(x=df4['Sex'])
+
+plt.hist(df4['Age'])
+
+sns.boxplot(df4['Age'], orient='v')
+
+
+
+
+
+who Has Better Chance of Survival Male or Female?
+
+sns.barplot(x='Sex',y='Survived', data=df4)
+
+
+
+Which Passenger Class Has Better Chance of Survival (First, Second, Or Third Class)? 
+
+sns.barplot(x='Pclass',y='Survived',data=df4)
+
+
+
+feature engineering
+
+df4['Family_Size'] = df4['SibSp'] + df4['Parch']
+
+df4.head()
+
+df4['Fare_Per_Person'] = df4['Fare'] / (df4['Family_Size'] + 1)
+
+df4.head()
+
+
+
