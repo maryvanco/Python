@@ -1,0 +1,99 @@
+import pandas as pd
+
+df = pd.read_csv(r"/Users/mary/Documents/python stuff/data/data thinkers tutorials/googleplaystore.csv")
+
+df.head()
+
+df.shape
+
+df.info()
+
+df.describe(include='all')
+
+
+
+Total Number of App Titles Contain Astrology
+
+len(df[df['App'].str.contains("Astrology",case=False)])
+
+
+
+Find Average App Rating
+
+df['Rating'].mean()
+
+
+
+Find Total Number of Unique Category
+
+df['Category'].nunique()
+
+
+
+Which Category Getting The Highest Average Rating?
+
+df.groupby('Category')['Rating'].mean().sort_values(ascending=False)
+
+
+
+Find Total Number of App having 5 Star Rating
+
+len(df[df['Rating']==5.0])
+
+
+
+Find Average Value of Reviews
+
+df[df['Reviews']=='3.0M']
+
+df['Reviews'] = df['Reviews'].replace('3.0M', 3.0)
+
+df['Reviews']=df['Reviews'].astype('float')
+
+df['Reviews'].dtype
+
+df['Reviews'].mean()
+
+
+
+
+
+Find Total Number of Free and Paid Apps
+
+df['Type'].value_counts()
+
+
+
+Which App Has Maximum Reviews?
+
+df[df['Reviews'].max()==df['Reviews']]['App']
+
+
+
+Display Top 5 Apps Having Highest Reviews
+
+index=df['Reviews'].sort_values(ascending=False).head().index
+
+df.iloc[index]['App']
+
+Find Average Rating of Free and Paid Apps
+
+df.groupby('Type')['Rating'].mean()
+
+
+
+Display Apps Having Maximum Installs
+
+df['Installs_1']=df['Installs'].str.replace(',','')
+
+df['Installs_1']=df['Installs_1'].str.replace('+','')
+
+df[df['Installs_1']=='Free']
+
+df['Installs_1']=df['Installs_1'].str.replace('Free','0')
+
+df['Installs_1']=df['Installs_1'].astype('int')
+
+df['Installs_1'].dtype
+
+df[df['Installs_1']==1000000000]['App'].unique()
