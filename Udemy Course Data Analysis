@@ -1,0 +1,146 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r"/Users/mary/Documents/python stuff/data/data thinkers tutorials/udemy_courses.csv", parse_dates=['published_timestamp'])
+
+
+
+gather information about dataset
+
+df.head()
+
+df.dtypes
+
+df.shape
+
+print("Number of rows", df.shape[0])
+print("Number of columns", df.shape[1])
+
+df.info()
+
+
+
+check null values
+
+print("Any Missing Value?", df.isnull().values.any())
+
+sns.heatmap(df.isnull())
+
+
+
+check for duplicate data and drop them
+
+dup= df.duplicated().any()
+print("Are there any duplicated values in data?", dup)
+
+df=df.drop_duplicates()
+
+dup= df.duplicated().any()
+print("Are there any duplicated values in data?", dup)
+
+
+
+Find Out Number of Courses Per Subjects
+
+df.groupby('subject').count()['course_id']
+
+df['subject'].value_counts()
+
+
+
+For Which Levels, Udemy Courses Providing The Courses
+
+df['level'].unique()
+
+df['level'].value_counts()
+
+
+
+Display The Count of Paid and Free Courses 
+
+df['is_paid'].value_counts()
+
+
+
+Which Course Has More Lectures (Free or Paid)?
+
+df.groupby(['is_paid']).mean()['num_lectures']
+
+
+
+Which Courses Have A Higher Number of Subscribers Free or Paid?
+
+sns.barplot(x='is_paid', y='num_subscribers', data=df)
+
+
+
+Which Level Has The Highest Number of Subscribers?
+
+df.groupby('level').mean()['num_subscribers']
+
+sns.barplot(x='level', y='num_subscribers', data=df)
+plt.xticks(rotation=60)
+plt.show()
+
+
+
+Find Most Popular Course Title
+
+df[df['num_subscribers'].max()==df['num_subscribers']]['course_title']
+
+
+
+Display 10 Most Popular Courses As Per Number of Subscribers
+
+top_10=df.sort_values(by='num_subscribers', ascending=False).head(10)
+
+sns.barplot(x='num_subscribers',y='course_title', data=top_10)
+
+
+
+Find The Course Which Is Having The Highest Number of Reviews.
+
+df.sort_values(by='num_reviews', ascending=False).head(1)
+
+df[df['num_reviews'].max()==df['num_reviews']]
+
+
+
+Does Price Affect the Number of Reviews?
+
+plt.figure(figsize=(15,6))
+sns.scatterplot(x='price',y='num_reviews', data=df)
+
+
+
+Find Total Number of Courses Related To Python
+
+len(df[df['course_title'].str.contains('Python',case=False)])
+
+df['course_title'].str.contains('Python',case=False).sum()
+
+
+
+Display 10 Most Popular Python Courses As Per Number of Subscribers
+
+python_courses=df[df['course_title'].str.contains('Python',case=False)]
+
+python_courses.sort_values(by='num_subscribers',ascending=False).head(10)
+
+
+
+In Which Year The Highest Number of Courses Were Posted?
+
+df['Year']=df['published_timestamp'].dt.year
+
+df.head()
+
+df['Year'].value_counts()
+
+
+
+Display Category-Wise Count of Posted Subjects [Year Wise] 
+
+df.groupby('Year')['subject'].value_counts()
+
