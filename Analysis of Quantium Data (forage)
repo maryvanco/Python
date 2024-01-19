@@ -1,0 +1,235 @@
+import libraries and datasets
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+trans_data = pd.read_excel(r"/Users/mary/Documents/python stuff/quantium internship/QVI_transaction_data.xlsx")
+
+trans_data.head()
+
+
+
+cust_data = pd.read_csv(r"/Users/mary/Documents/python stuff/quantium internship/QVI_purchase_behaviour.csv")
+
+cust_data.head()
+
+
+
+explore transaction data
+
+trans_data.info()
+
+
+
+date datatype was converted in excel before importing to pandas
+
+
+
+looking at PROD_NAME column
+
+trans_data['PROD_NAME'].describe()
+
+trans_data['PROD_NAME'].unique()
+
+deleting rows containing "salsa"
+
+trans_data[trans_data['PROD_NAME'].str.contains('salsa', case=False)]
+
+trans_data=trans_data[~trans_data['PROD_NAME'].str.contains('salsa',case=False)]
+
+
+
+looking for outliers
+
+trans_data.describe()
+
+
+
+looking at the 200 quantity order and the customer
+
+trans_data[trans_data['PROD_QTY']==200]
+
+trans_data[trans_data['LYLTY_CARD_NBR']==226000]
+
+
+
+deleting the outlier
+
+trans_data=trans_data[trans_data['LYLTY_CARD_NBR']!=226000]
+
+trans_data.describe()
+
+
+
+
+
+looking at date column
+
+trans_data['DATE'].describe()
+
+
+
+plotting transaction frequency
+
+transactions_by_day = trans_data.groupby('DATE').size()
+
+transactions_by_day.plot(kind = 'line')
+plt.xlabel("Date")
+plt.ylabel("Number of transactions")
+plt.title("Transactions over time")
+plt.show()
+
+
+
+looking at pack size
+
+pack_size = trans_data['PROD_NAME'].str[-4:]
+
+pack_size = pack_size.str.lower()
+
+pack_size.value_counts()
+
+trans_data['PACK_SIZE'] = pack_size
+
+trans_data['PACK_SIZE']=trans_data['PACK_SIZE'].replace('salt','not specified')
+
+
+
+plt.figure(figsize=(12,5))
+trans_data['PACK_SIZE'].hist(bins = 20)
+plt.xticks(rotation=45)
+
+plt.show()
+
+
+
+looking at brands
+
+def get_brand(product):
+    return product.split()[0]
+
+trans_data['BRAND_NAME']= trans_data['PROD_NAME'].apply(lambda x: get_brand(x))
+
+trans_data['BRAND_NAME'].value_counts()
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Red','RRD')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Dorito','Doritos')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Smith','Smiths')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Infzns','Infuzions')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Natural','NCC')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Grain','GrnWves')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('Snbts','Sunbites')
+
+trans_data['BRAND_NAME']=trans_data['BRAND_NAME'].replace('WW','Woolworths')
+
+trans_data['BRAND_NAME'].value_counts()
+
+
+
+
+
+
+
+looking at customer data
+
+cust_data.head()
+
+cust_data.info()
+
+cust_data['LIFESTAGE'].value_counts()
+
+cust_data['PREMIUM_CUSTOMER'].value_counts()
+
+
+
+merging transaction data to customer data
+
+data = trans_data.merge(cust_data, how = 'left')
+
+data.head()
+
+data.info()
+
+
+
+saving data to csv
+
+data.to_csv('qantium_data.csv', index=False)
+
+
+
+
+
+
+
+data analysis
+
+sales_life_stage = data.groupby('LIFESTAGE')['TOT_SALES'].sum()
+
+sales_life_stage.plot(kind= 'bar')
+plt.xlabel('Life Stage')
+plt.ylabel('Total Sales')
+
+sales_premium_group = data.groupby('PREMIUM_CUSTOMER')['TOT_SALES'].sum()
+
+sales_premium_group.plot(kind= 'bar')
+plt.xlabel('Premium Group')
+plt.ylabel('Total Sales')
+
+lifestage_premium_sales = data.groupby(['LIFESTAGE','PREMIUM_CUSTOMER'])['TOT_SALES'].sum()
+
+lifestage_premium_sales.plot(kind= 'bar')
+
+
+
+groups_count = data.groupby(['LIFESTAGE','PREMIUM_CUSTOMER'])['LYLTY_CARD_NBR'].count()
+
+groups_count.plot(kind= 'bar')
+
+
+
+groups_units_mean = data.groupby(['LIFESTAGE','PREMIUM_CUSTOMER'])['PROD_QTY'].mean()
+
+groups_units_mean.plot(kind= 'bar')
+
+
+
+looking at young singles and mainstream
+
+filter1 = data[data['LIFESTAGE']=='YOUNG SINGLES/COUPLES']
+youngsingles_and_mainstream = filter1[filter1['PREMIUM_CUSTOMER']=='Mainstream']
+youngsingles_and_mainstream
+
+youngsingles_and_mainstream['PROD_NAME'].value_counts().head()
+
+youngsingles_and_mainstream['BRAND_NAME'].value_counts().head()
+
+ysm_brands = youngsingles_and_mainstream.groupby('BRAND_NAME')['PROD_NAME'].count()
+
+ysm_brands.plot(kind= 'bar')
+
+data_brands = data.groupby('BRAND_NAME')['PROD_NAME'].count()
+data_brands.plot(kind= 'bar')
+
+
+
+
+
+youngsingles_and_mainstream['PACK_SIZE'].value_counts().head()
+
+ysm_size = youngsingles_and_mainstream.groupby('PACK_SIZE')['PACK_SIZE'].count()
+
+ysm_size.plot(kind= 'bar')
+
+data_size = data.groupby('PACK_SIZE')['PACK_SIZE'].count()
+data_size.plot(kind= 'bar')
+
+
+
